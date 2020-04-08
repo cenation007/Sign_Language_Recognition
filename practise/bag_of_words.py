@@ -55,27 +55,27 @@ def calc_accuracy(y_test,y_pred):
     print("f1 score is ",sm.f1_score(y_test,y_pred,average='micro'))
     return y_pred
 
-for (dirpath,dirnames,filenames) in os.walk(path):
-    for dirname in dirnames:
-        print(dirname)
-        for(direcpath,direcnames,files) in os.walk(path+"/"+dirname):
-            for file in files:
-                actual_path=path+"/"+dirname+"/"+file
-                _,des=process(actual_path)
-                img_descs.append(des)
-                y.append(label)
-        label=label+1
 
 def predict_svm(X_train,X_test,y_train,y_test):
     svc = SVC(kernel='linear')
     svc.fit(X_train,y_train)
     y_pred=svc.predict(X_test)
-    return calc_accuracy(y_test,y_pred)
+    return calc_accuracy(y_test,y_pred),svc
     
-
+for (dirpath,dirnames,filenames) in os.walk(path):
+    for dirname in dirnames:
+        print(dirname)
+        for(direcpath,direcnames,files) in os.walk(path+"/"+dirname):
+            for file in files:
+               actual_path=path+"/"+dirname+"/"+file
+               _,des=process(actual_path)
+               img_descs.append(des)
+               y.append(label)
+        label=label+1
+        
 training_idxs, test_idxs, val_idxs = train_test_val_split_idxs(len(y),0.3,0.2)
 
 X,cluster_model = cluster_features(img_descs, training_idxs, MiniBatchKMeans(n_clusters=150))
 
 X_train,X_test,X_val,y_train,y_test,y_val = perform_split(X,y,training_idxs,test_idxs,val_idxs)
-y_pred = predict_svm(X_train,X_test,y_train,y_test)
+y_pred,svc = predict_svm(X_train,X_test,y_train,y_test)
