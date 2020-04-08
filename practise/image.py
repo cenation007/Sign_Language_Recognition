@@ -64,4 +64,3 @@ def process(path):
     #img2 = cv.drawKeypoints(img2,kp,None,color=(0,255,0), flags=0)
     #img2 = cv.resize(img2,(256,256))
     return kp,des
-process('032.jpg')
